@@ -255,7 +255,7 @@ def main(args):
     t.add_feature('rank', 'Root')
     print_stderr( 'DONE!\n\n', args.quiet)
     if taxids_remove:
-        print_stderr('WARNING: the following ids were not found in the taxonomy database used: '+ ','.join(taxids_remove) +'\n', args.quiet)
+        print_stderr('WARNING: the following ids were not found in the taxonomy database used: '+ ','.join(map(str,taxids_remove)) +'\n', args.quiet)
 
 
     #### OUTPUT
@@ -593,7 +593,7 @@ taxids_remove is an empty list """
     
     # check if all taxids returned a result
     if len(set(taxid_list)) != len(results):
-        taxids_with_result = set([str(x[0]) for x in results])
+        taxids_with_result = set([ x[0] for x in results])
         taxids_remove += list(set(taxid_list) - taxids_with_result )
 
     parent_taxid_list = []
