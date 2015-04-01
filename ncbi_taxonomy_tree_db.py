@@ -10,9 +10,9 @@ args = parser.parse_args()
 
 if not args.folder:
     b = bash('wget ftp://ftp.ncbi.nih.gov/pub/taxonomy/taxdump.tar.gz')
-    if b[0]: raise Exception b[1]
+    if b[0]: raise Exception, b[1]
     b = bash('wget ftp://ftp.ncbi.nih.gov/pub/taxonomy/taxdump.tar.gz.md5')
-    if b[0]: raise Exception b[1]
+    if b[0]: raise Exception, b[1]
     md5 = [ x.rstrip() for x in open('taxdump.tar.gz.md5') ][0]
     b = bash('md5sum taxdump.tar.gz')
     if b[0]: raise Exception, b[1]
