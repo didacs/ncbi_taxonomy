@@ -5,7 +5,6 @@ import sqlite3
 import argparse
 from ete2 import Tree
 from collections import defaultdict
-#sys.path.append('/users/rg/didac/Scripts')
 from MMlib import bbash,unmask_characters,mask_characters,get_taxids_from_ncbi_db
 
 
