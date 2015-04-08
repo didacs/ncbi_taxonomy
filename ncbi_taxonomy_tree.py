@@ -149,7 +149,7 @@ def get_taxid_and_annotation():
 
 def get_name_and_annotation(arg, temp_dir):
     """"""
-    if not os.path.exists(args.name_annotation): raise Exception, 'file not found: %s\n' % arg
+    if not os.path.exists(arg): raise Exception, 'file not found: %s\n' % arg
     name_attrs = {}
     input_names = []
     for line in open(arg):
@@ -167,7 +167,7 @@ def get_name_and_annotation(arg, temp_dir):
             attrs_dict[ k ] = v
         name_attrs[ name ] = attrs_dict
         input_names.append(name)
-    out_hash, taxids_from_input_dict = get_taxid_from_names(input_names, temp_dir, is_list=True, quiet=args.quiet)
+    out_hash, taxids_from_input_dict = get_taxid_from_names(input_names, temp_dir, args.unmask, is_list=True, quiet=args.quiet)
     taxid_list = out_hash.values()
     # map taxid and attributes
     taxid_attrs = {}
@@ -233,7 +233,7 @@ def main(args):
 
     # if an annotation is provided for the names
     elif args.name_annotation:
-        taxid_list, taxids_from_input_dict, taxid_attrs = get_name_and_annotation()
+        taxid_list, taxids_from_input_dict, taxid_attrs = get_name_and_annotation(args.name_annotation, args.temp)
 
     # list of taxids is ready for building the tree
     if not taxid_list:
