@@ -328,7 +328,7 @@ def main(args):
             d = node.detach()
             new_node.add_child(d)
             new_leaf = new_node.add_child(name=node.name)
-            new_leaf.add_features( taxid=node.taxid, scientific_name=node.scientific_name, rank='no rank' )
+            new_leaf.add_features( taxid=node.taxid, rank='no rank' ) #scientific_name=node.scientific_name, 
             if len(node.get_children()) == 1: node.delete(prevent_nondicotomic=False)
 
 
