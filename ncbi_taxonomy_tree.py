@@ -258,7 +258,7 @@ def main(args):
 
 
     #### OUTPUT
-    # get the full lineage of species, this is done before removing non-dicotomic nodes, so no need for -d option
+    # get the full lineage of species, this is done before removing non-dicotomic nodes, so all nodes are presenent (no need for -d option)
     if args.lineage:
         lineage = []
         for l in t.get_leaves():
