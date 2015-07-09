@@ -9,7 +9,7 @@ parser.add_argument("-f","--folder",  help="folder containing names.dmp and node
 args = parser.parse_args()
 
 if not args.folder:
-    sys.stderr('Downloading taxdump.tar.gz...')
+    sys.stderr.write('Downloading taxdump.tar.gz...')
     b = bash('wget ftp://ftp.ncbi.nih.gov/pub/taxonomy/taxdump.tar.gz')
     if b[0]: raise Exception, b[1]
     b = bash('wget ftp://ftp.ncbi.nih.gov/pub/taxonomy/taxdump.tar.gz.md5')
@@ -22,7 +22,7 @@ if not args.folder:
     b=bash('gunzip -c taxdump.tar.gz | tar xf -')
     if b[0]: raise Exception, b[1]
     args.folder = '.'
-    sys.stderr('DONE!\n')
+    sys.stderr.write('DONE!\n')
 
 
 args.folder = args.folder.rstrip('/') +'/'
