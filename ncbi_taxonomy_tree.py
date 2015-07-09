@@ -148,7 +148,7 @@ def get_taxid_and_annotation():
     return taxid_list, taxid_attrs
 
 def get_name_and_annotation(arg, temp_dir):
-    """"""
+    """ """
     if not os.path.exists(arg): raise Exception, 'file not found: %s\n' % arg
     name_attrs = {}
     input_names = []
@@ -176,7 +176,7 @@ def get_name_and_annotation(arg, temp_dir):
     return taxid_list, taxids_from_input_dict, taxid_attrs
 
 def node_lineage(node, t):
-    """returns the lineage of node as a list with the ancestral nodes. each element in the list corresponds to (distance, rank, name), where distance is the number of nodes between
+    """DEPRECATED! returns the lineage of node as a list with the ancestral nodes. each element in the list corresponds to (distance, rank, name), where distance is the number of nodes between
  node and the root of the tree."""
     dist = int(node.get_distance(t, topology_only=True))
     lineage = [ (dist,node.rank,node.name,node.taxid) ]
@@ -186,6 +186,17 @@ def node_lineage(node, t):
         lineage.append( (dist,parent.rank,parent.name,parent.taxid) )
         parent = parent.up
     return sorted( lineage, key = lambda x:x[0] )
+
+def include_lineage(t):
+    """ """
+    lineages_dict={}
+    for node in t.get_descendants('preorder'):
+        if not node.is_leaf():
+            for name in node.get_leaf_names():
+#                lineages_dict.setdefault(name,[]).append( (node.rank,node.name,node.taxid) )
+                lineages_dict.setdefault(name,[]).append( node.name )
+        else:
+            node.add_feature('lineage', '||'.join( lineages_dict[node.name] + [node.name] )   )
 
 
 def print_stderr(msg, quiet=False):
@@ -204,7 +215,7 @@ def main(args):
     # if input file contains taxonomy ids
     if args.taxid:
         if not os.path.exists(args.taxid): raise Exception, 'file not found: %s\n' % args.taxid
-        taxid_list = [x.rstrip() for x in open(args.taxid)]
+        taxid_list = list(set([x.rstrip() for x in open(args.taxid)]))
         try:
             [int(x) for x in taxid_list ]
         except:
@@ -260,9 +271,7 @@ def main(args):
     #### OUTPUT
     # get the full lineage of species, this is done before removing non-dicotomic nodes, so all nodes are presenent (no need for -d option)
     if args.lineage:
-        lineage = []
-        for l in t.get_leaves():
-            l.add_feature('lineage', '||'.join( [ x[2] for x in node_lineage(l,t) ] )   )
+        include_lineage(t)
 
 
     # taxonomy ids file
@@ -593,7 +602,7 @@ taxids_remove is an empty list """
     # check if all taxids returned a result
     if len(set(taxid_list)) != len(results):
         taxids_with_result = set([ x[0] for x in results])
-        taxids_remove += list(set(taxid_list) - taxids_with_result )
+        taxids_remove += list(set(map(int, taxid_list)) - taxids_with_result )
 
     parent_taxid_list = []
     for result in results:
