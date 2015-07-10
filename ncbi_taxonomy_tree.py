@@ -115,7 +115,10 @@ def get_taxid_from_names(arg, temp_dir, unmask, is_list=False, quiet=False):
         if not arg: raise Exception, 'ERROR if is_list=True, arg is mandatory'
         names_list = set(arg)
     print_stderr( '%s unique names in input\n' % (len(names_list)), quiet)
-    out_hash, ambigous_hash, not_found_hash = get_taxids_from_ncbi_db(names_list, temp_dir=temp_dir, full=True)
+    names_db = '/'.join( args.database.split('/')[:-1] + ['names.dmp'] )
+    if not os.path.exists(names_db):
+        raise Exception, 'error, file not found: '+ names_db
+    out_hash, ambigous_hash, not_found_hash = get_taxids_from_ncbi_db(names_list, ncbi_db=names_db, temp_dir=temp_dir, full=True)
     if ambigous_hash: print_stderr(  'WARNING: %s ambiguous names: %s\n' % (len(ambigous_hash),' '.join( ambigous_hash )) , quiet)
     if not_found_hash: print_stderr( 'WARNING: %s names not found in ncbi: %s\n' % (len(not_found_hash), ','.join(not_found_hash.keys())) , quiet)
     # check if there is a correspondence 1:1 between names and taxids
