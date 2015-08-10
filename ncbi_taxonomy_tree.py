@@ -102,22 +102,22 @@ ncbi_taxonomy_tree.main(args)
     return args
 
 
-def get_taxid_from_names(arg, temp_dir, unmask, is_list=False, quiet=False):
+def get_taxid_from_names(input_names, temp_dir, unmask, database, is_list=False, quiet=False):
     """ gets a file with the list of names, and returns the list of taxids and a dict {taxid:name}"""
     if not is_list:
         names_list = set()
-        for line in open(arg):
+        for line in open(input_names):
             if unmask:
                 names_list.add( unmask_characters(line.strip().replace('_',' ')) )
             else:
                 names_list.add(line.strip())
     else:
-        if not arg: raise Exception, 'ERROR if is_list=True, arg is mandatory'
+        if not input_names: raise Exception, 'ERROR if is_list=True, arg is mandatory'
         names_list = set(arg)
     print_stderr( '%s unique names in input\n' % (len(names_list)), quiet)
-    names_db = '/'.join( args.database.split('/')[:-1] + ['names.dmp'] )
+    names_db = '/'.join( database.split('/')[:-1] + ['names.dmp'] )
     if not os.path.exists(names_db):
-        raise Exception, 'error, file not found: '+ names_db
+        raise Exception, 'ERROR file not found: '+ names_db
     out_hash, ambigous_hash, not_found_hash = get_taxids_from_ncbi_db(names_list, ncbi_db=names_db, temp_dir=temp_dir, full=True)
     if ambigous_hash: print_stderr(  'WARNING: %s ambiguous names: %s\n' % (len(ambigous_hash),' '.join( ambigous_hash )) , quiet)
     if not_found_hash: print_stderr( 'WARNING: %s names not found in ncbi: %s\n' % (len(not_found_hash), ','.join(not_found_hash.keys())) , quiet)
@@ -170,7 +170,7 @@ def get_name_and_annotation(arg, temp_dir):
             attrs_dict[ k ] = v
         name_attrs[ name ] = attrs_dict
         input_names.append(name)
-    out_hash, taxids_from_input_dict = get_taxid_from_names(input_names, temp_dir, args.unmask, is_list=True, quiet=args.quiet)
+    out_hash, taxids_from_input_dict = get_taxid_from_names(input_names, temp_dir, args.unmask, args.database, is_list=True, quiet=args.quiet)
     taxid_list = out_hash.values()
     # map taxid and attributes
     taxid_attrs = {}
@@ -227,7 +227,7 @@ def main(args):
     # if input file contains names
     elif args.name:
         if not os.path.exists(args.name): raise Exception, 'file not found: %s\n' % args.name
-        out_hash,taxids_from_input_dict = get_taxid_from_names(args.name, args.temp, args.unmask, quiet=args.quiet)
+        out_hash,taxids_from_input_dict = get_taxid_from_names(args.name, args.temp, args.unmask, args.database, quiet=args.quiet)
         taxid_list = out_hash.values()
 
     # if both taxid and name in input

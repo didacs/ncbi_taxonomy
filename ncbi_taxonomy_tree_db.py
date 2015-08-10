@@ -50,6 +50,7 @@ with con:
         parent = nodes_dict[ taxid ][ 'parent_tax_id' ]
         rank   = nodes_dict[ taxid ][ 'rank' ]
         name   = names_dict[ taxid ][ 'scientific name' ]
+        parent,rank,name = map(lambda x: x.replace('"',''), [parent,rank,name])
         cur.execute('INSERT INTO species VALUES('+ taxid +', '+ parent +', "'+ rank +'", "'+ name +'")')
 
     sys.stderr.write( 'DONE!\n' )
